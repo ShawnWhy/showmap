@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body, html, #myCanvas {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="myCanvas"></canvas>
+
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    var scale = 1;
+    var scaleMultiplier = 0.8;
+
+    function windowResized() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawCircleOfSquares();
+    }
+
+    window.addEventListener('resize', windowResized);
+    window.addEventListener('wheel', zoomHandler);
+    windowResized();
+
+    function zoomHandler(e) {
+      e.preventDefault();
+      var mouseX = e.clientX - canvas.getBoundingClientRect().left;
+      var mouseY = e.clientY - canvas.getBoundingClientRect().top;
+      if(e.deltaY < 0) { // zoom in
+        scale /= scaleMultiplier;
+      } else { // zoom out
+        scale *= scaleMultiplier;
+      }
+    //   ctx.translate(-mouseX, -mouseY);
+      drawCircleOfSquares();
+    }
+
+    function drawCircleOfSquares() {
+      var centerX = canvas.width / 2;
+      var centerY = canvas.height / 2;
+      var radius = Math.min(centerX, centerY) * 0.8 * scale;
+      var innerRadius = radius * 0.5;
+      var numSquares = 500;
+      var innerNumSquares = 250;
+      var angleStep = 2 * Math.PI / numSquares;
+      var innerAngleStep = 2 * Math.PI / innerNumSquares;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'navy';
+
+      var outerPoints = [];
+      var innerPoints = [];
+
+      for (var i = 0; i < numSquares; i++) {
+        var angle = i * angleStep;
+        var dx = centerX + radius * Math.cos(angle);
+        var dy = centerY + radius * Math.sin(angle);
+        var squareSize = 5;
+
+        ctx.fillRect(dx, dy, squareSize, squareSize);
+        outerPoints.push({x: dx, y: dy});
+      }
+
+      for (var i = 0; i < innerNumSquares; i++) {
+        var angle = i * innerAngleStep;
+        var dx = centerX + innerRadius * Math.cos(angle);
+        var dy = centerY + innerRadius * Math.sin(angle);
+        var squareSize = 5;
+
+        ctx.fillRect(dx, dy, squareSize, squareSize);
+        innerPoints.push({x: dx, y: dy});
+      }
+        
+      ctx.strokeStyle = 'lightgrey';
+
+      for (var i = 0; i < numSquares; i++) {
+        var innerIndex = Math.floor(i * innerNumSquares / numSquares);
+        ctx.beginPath();
+        ctx.moveTo(outerPoints[i].x, outerPoints[i].y);
+        ctx.lineTo(innerPoints[innerIndex].x, innerPoints[innerIndex].y);
+        ctx.stroke();
+      }
+    }
+
+  </script>
+</body>
+</html>
