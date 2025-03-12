@@ -21,7 +21,7 @@ with open(source, 'r') as f:
             pass
     for line in data:
         #give the line a rotation key and give it a degree value that is 360/15*index
-        line['rotation'] = 360/15*data.index(line)
+        line['rotation'] = 360/(15*3)*data.index(line)
         line['children'] = []
         line['level']=1
         level1.append(copy.deepcopy(line))
@@ -39,7 +39,8 @@ with open(source, 'r') as f:
         for child in line['children']:
             child['children'] = []
             child['level']=2
-            child['rotation'] = line['children'].index(child)*360/15*3
+            # child['rotation'] = 360/(15*3^2)*line.index(child)
+            
             level2.append(copy.deepcopy(child))
 
             for row in reader:
@@ -57,7 +58,8 @@ with open(source, 'r') as f:
             for grandchild in child['children']:
                 grandchild['children'] = []
                 grandchild['level']=3
-                grandchild['rotation'] = child['children'].index(grandchild)*360/15*9
+                # grandchild['rotation'] = 360/(15*3^3)*child.index(grandchild)
+                # grandchild['rotation'] = child['children'].index(grandchild)*360/15*9
                 level3.append(copy.deepcopy(grandchild))
 
                 for row in reader:
@@ -76,8 +78,9 @@ with open(source, 'r') as f:
                 for greatgrandchild in grandchild['children']:
                     greatgrandchild['children'] = []
                     greatgrandchild['level']=4
-                    greatgrandchild['rotation'] = grandchild['children'].index(greatgrandchild)*360/15*27
-                    print (greatgrandchild)
+                    # greatgrandchild['rotation'] = 360/60*line.index(line)
+                    # greatgrandchild['rotation'] = grandchild['children'].index(greatgrandchild)*360/15*27
+                    # print (greatgrandchild)
                     # push the temp state of greatgrandchild to level4
                     temp_state = copy.deepcopy(greatgrandchild)
                     level4.append(temp_state)
@@ -94,7 +97,7 @@ with open(source, 'r') as f:
                     for greatgreatgrandchild in greatgrandchild['children']:
                         greatgreatgrandchild['children'] = []
                         greatgreatgrandchild['level']=5
-                        greatgreatgrandchild['rotation'] = greatgrandchild['children'].index(greatgreatgrandchild)*360/15*81
+                        # greatgreatgrandchild['rotation'] = greatgrandchild['children'].index(greatgreatgrandchild)*360/15*81
                         print (greatgreatgrandchild)
                         # push the temp state of greatgrandchild to level4
                         temp_state = copy.deepcopy(greatgreatgrandchild)
@@ -104,7 +107,16 @@ with open(source, 'r') as f:
                                 greatgreatgrandchild['children'].append(row.copy())
                             else:
                                 pass
-
+#rotate the array elements in level 2 tp 5 by 360/15*3^levelnumber*index 
+    for i in range(0, len(level2)):
+        level2[i]['rotation'] = 360/(15*3)*i
+    for i in range(0, len(level3)):
+        level3[i]['rotation'] = 360/(15*9)*i
+    for i in range(0, len(level4)):
+        level4[i]['rotation'] = 360/(15*27)*i
+    for i in range(0, len(level5)):
+        level5[i]['rotation'] = 360/(15*81)*i
+# print(level2)
     #then write the new list to a json file
     with open(output, 'w') as f:
         json.dump(data, f)
