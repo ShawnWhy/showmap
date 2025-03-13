@@ -1,105 +1,347 @@
 <html>
-<head>
-  <style>
-    body, html, #myCanvas {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="myCanvas"></canvas>
+  <head>
+    <style>
+      body,
+      html,
+      #myCanvas {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
 
-  <script>
-    //get data from the server using fetch
-    fetch('http://localhost:3000/leveldata')
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    });
-    var canvas = document.getElementById('myCanvas');
-    var ctx = canvas.getContext('2d');
-    var scale = 1;
-    var scaleMultiplier = 0.8;
-    var centerX = 0;
-    var centerY = 0;
+    <script>
+      var level1 = [];
+      var level2 = [];
+      var level3 = [];
+      var level4 = [];
+      var level5 = [];
 
-    function windowResized() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      centerX = canvas.width / 2;
-      centerY = canvas.height / 2;
-      drawCircleOfSquares();
-    }
+      //get data from the server using fetch
+      fetch("http://localhost:3000/leveldata")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          level1 = data.data1;
+          level2 = data.data2;
+          level3 = data.data3;
+          level4 = data.data4;
+          level5 = data.data5;
+        });
 
-    window.addEventListener('resize', windowResized);
-    window.addEventListener('wheel', zoomHandler);
-    windowResized();
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      var scale = 1;
+      var scaleMultiplier = 0.8;
+      var centerX = 0;
+      var centerY = 0;
 
-    function zoomHandler(e) {
-      e.preventDefault();
-      var mouseX = e.clientX - canvas.getBoundingClientRect().left;
-      var mouseY = e.clientY - canvas.getBoundingClientRect().top;
-      if(e.deltaY < 0) { // zoom in
-        scale /= scaleMultiplier;
-        centerX = mouseX;
-        centerY = mouseY;
-      } else { // zoom out
-        scale *= scaleMultiplier;
+      function windowResized() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         centerX = canvas.width / 2;
         centerY = canvas.height / 2;
-      }
-      drawCircleOfSquares();
-    }
-
-    function drawCircleOfSquares() {
-      var radius = Math.min(centerX, centerY) * 0.8 * scale;
-      var innerRadius = radius * 0.5;
-      var numSquares = 500;
-      var innerNumSquares = 250;
-      var angleStep = 2 * Math.PI / numSquares;
-      var innerAngleStep = 2 * Math.PI / innerNumSquares;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'navy';
-
-      var outerPoints = [];
-      var innerPoints = [];
-
-      for (var i = 0; i < numSquares; i++) {
-        var angle = i * angleStep;
-        var dx = centerX + radius * Math.cos(angle);
-        var dy = centerY + radius * Math.sin(angle);
-        var squareSize = 5;
-
-        ctx.fillRect(dx, dy, squareSize, squareSize);
-        outerPoints.push({x: dx, y: dy});
+        drawCircleOfSquares();
       }
 
-      for (var i = 0; i < innerNumSquares; i++) {
-        var angle = i * innerAngleStep;
-        var dx = centerX + innerRadius * Math.cos(angle);
-        var dy = centerY + innerRadius * Math.sin(angle);
-        var squareSize = 5;
+      window.addEventListener("resize", windowResized);
+      window.addEventListener("wheel", zoomHandler);
+      windowResized();
 
-        ctx.fillRect(dx, dy, squareSize, squareSize);
-        innerPoints.push({x: dx, y: dy});
+      function zoomHandler(e) {
+        e.preventDefault();
+        var mouseX = e.clientX - canvas.getBoundingClientRect().left;
+        var mouseY = e.clientY - canvas.getBoundingClientRect().top;
+        if (e.deltaY < 0) {
+          // zoom in
+          scale /= scaleMultiplier;
+          centerX = mouseX;
+          centerY = mouseY;
+        } else {
+          // zoom out
+          scale *= scaleMultiplier;
+          centerX = canvas.width / 2;
+          centerY = canvas.height / 2;
+        }
+        if (level5.length > 0) {
+          drawCircleOfSquaresBasedOnData(
+            level1,
+            level2,
+            level3,
+            level4,
+            level5
+          );
+        } else {
+          drawCircleOfSquares();
+        }
       }
-        
-      ctx.strokeStyle = 'lightgrey';
 
-      for (var i = 0; i < numSquares; i++) {
-        var innerIndex = Math.floor(i * innerNumSquares / numSquares);
-        ctx.beginPath();
-        ctx.moveTo(outerPoints[i].x, outerPoints[i].y);
-        ctx.lineTo(innerPoints[innerIndex].x, innerPoints[innerIndex].y);
-        ctx.stroke();
+      function drawCircleOfSquaresBasedOnData(
+        level1,
+        level2,
+        level3,
+        level4,
+        level5
+      ) {
+        //draw the circle of squares based on the data
+        //draw each level of squares each with a different color of the same size and position each level in a circle
+        var radius5 = Math.min(centerX, centerY) * 0.8 * scale;
+        var radius4 = Math.min(centerX, centerY) * 0.7 * scale;
+        var radius3 = Math.min(centerX, centerY) * 0.6 * scale;
+        var radius2 = Math.min(centerX, centerY) * 0.5 * scale;
+        var radius1 = Math.min(centerX, centerY) * 0.4 * scale;
+
+        var numSquares5 = level5.length;
+        var numSquares4 = level4.length;
+        var numSquares3 = level3.length;
+        var numSquares2 = level2.length;
+        var numSquares1 = level1.length;
+        var angleStep5 = (2 * Math.PI) / numSquares5;
+        var angleStep4 = (2 * Math.PI) / numSquares4;
+        var angleStep3 = (2 * Math.PI) / numSquares3;
+        var angleStep2 = (2 * Math.PI) / numSquares2;
+        var angleStep1 = (2 * Math.PI) / numSquares1;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //make an array of 100 tertiary colors using hash
+        var colors = [
+          "#FF0000",
+          "#FF3300",
+          "#FF6600",
+          "#FF9900",
+          "#FFCC00",
+          "#FFFF00",
+          "#CCFF00",
+          "#99FF00",
+          "#66FF00",
+          "#33FF00",
+          "#00FF00",
+          "#00FF33",
+          "#00FF66",
+          "#00FF99",
+          "#00FFCC",
+          "#00FFFF",
+          "#00CCFF",
+          "#0099FF",
+          "#0066FF",
+          "#0033FF",
+          "#0000FF",
+          "#3300FF",
+          "#6600FF",
+          "#9900FF",
+          "#CC00FF",
+          "#FF00FF",
+          "#FF00CC",
+          "#FF0099",
+          "#FF0066",
+          "#FF0033",
+          "#FF0000",
+          "#FF3300",
+          "#FF6600",
+          "#FF9900",
+          "#FFCC00",
+          "#FFFF00",
+          "#CCFF00",
+          "#99FF00",
+          "#66FF00",
+          "#33FF00",
+          "#00FF00",
+          "#00FF33",
+          "#00FF66",
+          "#00FF99",
+          "#00FFCC",
+          "#00FFFF",
+          "#00CCFF",
+          "#0099FF",
+          "#0066FF",
+          "#0033FF",
+          "#0000FF",
+          "#3300FF",
+          "#6600FF",
+          "#9900FF",
+          "#CC00FF",
+          "#FF00FF",
+          "#FF00CC",
+          "#FF0099",
+          "#FF0066",
+          "#FF0033",
+          "#FF0000",
+          "#FF3300",
+          "#FF6600",
+          "#FF9900",
+          "#FFCC00",
+          "#FFFF00",
+          "#CCFF00",
+          "#99FF00",
+          "#66FF00",
+          "#33FF00",
+          "#00FF00",
+          "#00FF33",
+          "#00FF66",
+          "#00FF99",
+          "#00FFCC",
+          "#00FFFF",
+          "#00CCFF",
+          "#0099FF",
+          "#0066FF",
+          "#0033FF",
+          "#0000FF",
+          "#3300FF",
+          "#6600FF",
+          "#9900FF",
+          "#CC00FF",
+          "#FF00FF",
+          "#FF00CC",
+          "#FF0099",
+          "#FF0066",
+          "#FF0033",
+          "#FF0000",
+          "#FF3300",
+          "#FF6600",
+          "#FF9900",
+          "#FFCC00",
+          "#FFFF00",
+          "#CCFF00",
+          "#99FF00",
+          "#66FF00",
+          "#33FF00",
+          "#00FF00",
+        ];
+
+       
+
+        var points5 = [];
+        var points4 = [];
+        var points3 = [];
+        var points2 = [];
+        var points1 = [];
+
+        for (var i = 0; i < numSquares5; i++) {
+          //loop though the colors array and assign each color to a square
+          //if the colors array is less than the number of squares, loop through the colors array again
+          fillcolor = colors[i % colors.length];
+          ctx.fillStyle = fillcolor;
+         
+          var angle = i * angleStep5;
+          var dx = centerX + radius5 * Math.cos(angle);
+          var dy = centerY + radius5 * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          points5.push({ x: dx, y: dy });
+        }
+
+        for (var i = 0; i < numSquares4; i++) {
+          fillcolor = colors[i % colors.length];
+          ctx.fillStyle = fillcolor;
+          var angle = i * angleStep4;
+          var dx = centerX + radius4 * Math.cos(angle);
+          var dy = centerY + radius4 * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          points4.push({ x: dx, y: dy });
+        }
+
+        for (var i = 0; i < numSquares3; i++) {
+            fillcolor = colors[i % colors.length];
+          ctx.fillStyle = fillcolor;
+          var angle = i * angleStep3;
+          var dx = centerX + radius3 * Math.cos(angle);
+          var dy = centerY + radius3 * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          points3.push({ x: dx, y: dy });
+        }
+
+        for (var i = 0; i < numSquares2; i++) {
+            fillcolor = colors[i % colors.length];
+          ctx.fillStyle = fillcolor;
+          var angle = i * angleStep2;
+          var dx = centerX + radius2 * Math.cos(angle);
+          var dy = centerY + radius2 * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          points2.push({ x: dx, y: dy });
+        }
+
+        for (var i = 0; i < numSquares1; i++) {
+            fillcolor = colors[i % colors.length];
+          ctx.fillStyle = fillcolor;
+          var angle = i * angleStep1;
+          var dx = centerX + radius1 * Math.cos(angle);
+          var dy = centerY + radius1 * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          points1.push({ x: dx, y: dy });
+        }
+
+        ctx.strokeStyle = "lightgrey";
+             for (var i = 0; i < numSquares5; i++) {
+          let child = level5[i];
+          console.log(child);
+          let parent = level4.findIndex((item) => item.id === child.parent);
+          //parent is the index of the parent of the child where the parent's child field has the id of the child
+              console.log(parent);
+          ctx.beginPath();
+          ctx.moveTo(points5[i].x, points5[i].y);
+          ctx.lineTo(points4[parent].x, points4[parent].y);
+          ctx.stroke();
+        }
       }
-    }
-  </script>
- 
-</body>
+
+      function drawCircleOfSquares() {
+        var radius = Math.min(centerX, centerY) * 0.8 * scale;
+        var innerRadius = radius * 0.5;
+        var numSquares = 500;
+        var innerNumSquares = 250;
+        var angleStep = (2 * Math.PI) / numSquares;
+        var innerAngleStep = (2 * Math.PI) / innerNumSquares;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "navy";
+
+        var outerPoints = [];
+        var innerPoints = [];
+
+        for (var i = 0; i < numSquares; i++) {
+          var angle = i * angleStep;
+          var dx = centerX + radius * Math.cos(angle);
+          var dy = centerY + radius * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          outerPoints.push({ x: dx, y: dy });
+        }
+
+        for (var i = 0; i < innerNumSquares; i++) {
+          var angle = i * innerAngleStep;
+          var dx = centerX + innerRadius * Math.cos(angle);
+          var dy = centerY + innerRadius * Math.sin(angle);
+          var squareSize = 5;
+
+          ctx.fillRect(dx, dy, squareSize, squareSize);
+          innerPoints.push({ x: dx, y: dy });
+        }
+
+        ctx.strokeStyle = "lightgrey";
+
+        for (var i = 0; i < numSquares; i++) {
+          var innerIndex = Math.floor((i * innerNumSquares) / numSquares);
+          ctx.beginPath();
+          ctx.moveTo(outerPoints[i].x, outerPoints[i].y);
+          ctx.lineTo(innerPoints[innerIndex].x, innerPoints[innerIndex].y);
+          ctx.stroke();
+        }
+      }
+    </script>
+  </body>
 </html>
