@@ -296,6 +296,31 @@
           ctx.lineTo(points4[parent].x, points4[parent].y);
           ctx.stroke();
         }
+          for (var i = 0; i < numSquares4; i++) {
+          let child = level4[i];
+          let parent = level3.findIndex((item) => item.id === child.parent);
+          ctx.beginPath();
+          ctx.moveTo(points4[i].x, points4[i].y);
+          ctx.lineTo(points3[parent].x, points3[parent].y);
+          ctx.stroke();
+          }
+          for (var i = 0; i < numSquares3; i++) {
+          let child = level3[i];
+          let parent = level2.findIndex((item) => item.id === child.parent);
+          ctx.beginPath();
+          ctx.moveTo(points3[i].x, points3[i].y);
+          ctx.lineTo(points2[parent].x, points2[parent].y);
+          ctx.stroke();
+          }
+          for (var i = 0; i < numSquares2; i++) {
+          let child = level2[i];
+          let parent = level1.findIndex((item) => item.id === child.parent);
+          ctx.beginPath();
+          ctx.moveTo(points2[i].x, points2[i].y);
+          ctx.lineTo(points1[parent].x, points1[parent].y);
+          ctx.stroke();
+          }
+          
       }
 
       function drawCircleOfSquares() {
