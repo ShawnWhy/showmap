@@ -32,6 +32,7 @@
           level3 = data.data3;
           level4 = data.data4;
           level5 = data.data5;
+          windowResized();
         });
 
       var canvas = document.getElementById("myCanvas");
@@ -44,32 +45,33 @@
       var offsetY = 0;
       var dragging = false;
       var startX, startY;
-      var points1=[]
-      var points2=[]
-      var points3=[]
-      var points4=[]
-      var points5=[]
-      var numofSquares1
-      var numofSquares2
-      var numofSquares3
-      var numofSquares4
-      var numofSquares5
-
+      var points1 = [];
+      var points2 = [];
+      var points3 = [];
+      var points4 = [];
+      var points5 = [];
+      var numofSquares1;
+      var numofSquares2;
+      var numofSquares3;
+      var numofSquares4;
+      var numofSquares5;
+      var selectedLevel;
+      var selectedIndex;
 
       function windowResized() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         centerX = canvas.width / 2;
         centerY = canvas.height / 2;
-        drawCircleOfSquares();
+        //drawCircleOfSquares()
+        drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
       }
 
       window.addEventListener("resize", windowResized);
       window.addEventListener("wheel", zoomHandler);
-     // window.addEventListener("mousedown", onMouseDown);
+      // window.addEventListener("mousedown", onMouseDown);
       //window.addEventListener("mouseup", onMouseUp);
       //window.addEventListener("mousemove", onMouseMove);
-      windowResized();
       function onMouseDown(e) {
         dragging = true;
         startX = e.clientX - offsetX;
@@ -82,19 +84,19 @@
 
       function onMouseMove(e) {
         if (dragging) {
-         // if (!onMouseMove.throttleTimeout) {
-            onMouseMove.throttleTimeout = setTimeout(() => {
-              onMouseMove.throttleTimeout = null;
-              offsetX = e.clientX - startX;
-              offsetY = e.clientY - startY;
-              drawCircleOfSquaresBasedOnData(
-                level1,
-                level2,
-                level3,
-                level4,
-                level5
-              );
-            }, 200);
+          // if (!onMouseMove.throttleTimeout) {
+          onMouseMove.throttleTimeout = setTimeout(() => {
+            onMouseMove.throttleTimeout = null;
+            offsetX = e.clientX - startX;
+            offsetY = e.clientY - startY;
+            drawCircleOfSquaresBasedOnData(
+              level1,
+              level2,
+              level3,
+              level4,
+              level5
+            );
+          }, 200);
           //}
         }
       }
@@ -155,7 +157,7 @@
         var angleStep3 = (2 * Math.PI) / numSquares3;
         var angleStep2 = (2 * Math.PI) / numSquares2;
         var angleStep1 = (2 * Math.PI) / numSquares1;
-
+        ctx.restore();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(offsetX, offsetY);
@@ -266,8 +268,6 @@
           "#00FF00",
         ];
 
-
-
         for (var i = 0; i < numSquares5; i++) {
           //loop though the colors array and assign each color to a square
           //if the colors array is less than the number of squares, loop through the colors array again
@@ -297,7 +297,7 @@
           var dy = centerY + radius4 * Math.sin(angle);
           //var squareSize = 5;
 
-         // ctx.fillRect(dx, dy, squareSize, squareSize);
+          // ctx.fillRect(dx, dy, squareSize, squareSize);
           points4.push({ x: dx, y: dy });
         }
 
@@ -315,11 +315,11 @@
 
         for (var i = 0; i < numSquares2; i++) {
           //fillcolor = colors[i % colors.length];
-         // ctx.fillStyle = fillcolor;
+          // ctx.fillStyle = fillcolor;
           var angle = i * angleStep2 - angleStep2;
           var dx = centerX + radius2 * Math.cos(angle);
           var dy = centerY + radius2 * Math.sin(angle);
-         // var squareSize = 5;
+          // var squareSize = 5;
 
           //ctx.fillRect(dx, dy, squareSize, squareSize);
           points2.push({ x: dx, y: dy });
@@ -362,7 +362,6 @@
           ctx.fillStyle = fillcolor;
           var squareSize = 5;
           ctx.fillRect(points4[i].x, points4[i].y, squareSize, squareSize);
-
         }
         for (var i = 0; i < numSquares3; i++) {
           let child = level3[i];
@@ -386,16 +385,24 @@
           fillcolor = colors[i % colors.length];
           ctx.fillStyle = fillcolor;
           var squareSize = 5;
-          ctx.fillRect(points2[i].x-squareSize/2, points2[i].y-squareSize/2, squareSize, squareSize);
-
+          ctx.fillRect(
+            points2[i].x - squareSize / 2,
+            points2[i].y - squareSize / 2,
+            squareSize,
+            squareSize
+          );
         }
-                for (var i = 0; i < numSquares1; i++) {
+        for (var i = 0; i < numSquares1; i++) {
           fillcolor = colors[i % colors.length];
           ctx.fillStyle = fillcolor;
           var squareSize = 5;
-          ctx.fillRect(points1[i].x-squareSize/2, points1[i].y-squareSize/2, squareSize, squareSize);
+          ctx.fillRect(
+            points1[i].x - squareSize / 2,
+            points1[i].y - squareSize / 2,
+            squareSize,
+            squareSize
+          );
         }
-
       }
 
       function drawCircleOfSquares() {
@@ -427,13 +434,10 @@
           var dx = centerX + innerRadius * Math.cos(angle);
           var dy = centerY + innerRadius * Math.sin(angle);
           var squareSize = 5;
-
           ctx.fillRect(dx, dy, squareSize, squareSize);
           innerPoints.push({ x: dx, y: dy });
         }
-
         ctx.strokeStyle = "lightgrey";
-
         for (var i = 0; i < numSquares; i++) {
           var innerIndex = Math.floor((i * innerNumSquares) / numSquares);
           ctx.beginPath();
@@ -441,51 +445,78 @@
           ctx.lineTo(innerPoints[innerIndex].x, innerPoints[innerIndex].y);
           ctx.stroke();
         }
+      }
 
-        //click function 
-        canvas.addEventListener("click", function (e) {
-           console.log("mouse clicked")
-
-          //if the mouse position is hovering a square, make the sqare 2x bigger
-          //if the mouse position is not hovering a square, make the square 1x
-          var mouseX = e.clientX 
-          //- canvas.getBoundingClientRect().left;
-          var mouseY = e.clientY 
-          //- canvas.getBoundingClientRect().top;
-         for (var i = 0; i < numSquares1; i++) {
+      canvas.addEventListener("click", function (e) {
+        console.log("mouse clicked");
+        //if the mouse position is hovering a square, make the sqare 2x bigger
+        //if the mouse position is not hovering a square, make the square 1x
+        var mouseX = e.clientX;
+        var mouseY = e.clientY;
+        for (var i = 0; i < numSquares1; i++) {
+          var transformedX = (mouseX - offsetX) / scale;
+          var transformedY = (mouseY - offsetY) / scale;
           if (
-            mouseX > points1[i].x - 40 &&
-            mouseX < points1[i].x + 40 &&
-            mouseY > points1[i].y - 40 &&
-            mouseY < points1[i].y + 40
+            transformedX > points1[i].x - 5 &&
+            transformedX < points1[i].x + 5 &&
+            transformedY > points1[i].y - 5 &&
+            transformedY < points1[i].y + 5
           ) {
-             console.log("square hit")
+            console.log("square hit");
 
             ctx.fillStyle = "red";
             var squareSize = 10;
-            ctx.fillRect(points1[i].x-squareSize/2, points1[i].y-squareSize/2, squareSize, squareSize);
-          } 
+            ctx.fillRect(
+              points1[i].x - squareSize / 2,
+              points1[i].y - squareSize / 2,
+              squareSize,
+              squareSize
+            );
+          }
         }
 
-               for (var i = 0; i < numSquares2; i++) {
-            var transformedX = (mouseX - offsetX) / scale;
-            var transformedY = (mouseY - offsetY) / scale;
-            if (
+        for (let i = 0; i < numSquares2; i++) {
+          var transformedX = (mouseX - offsetX) / scale;
+          var transformedY = (mouseY - offsetY) / scale;
+          if (
             transformedX > points2[i].x - 5 &&
             transformedX < points2[i].x + 5 &&
             transformedY > points2[i].y - 5 &&
             transformedY < points2[i].y + 5
           ) {
-             console.log("square hit")
 
-            ctx.fillStyle = "red";
-            var squareSize = 10;
-            ctx.fillRect(points2[i].x-squareSize/2, points2[i].y-squareSize/2, squareSize, squareSize);
+          let renderinterval = setInterval(() => {
+            console.log(i)
+            console.log(points2)
+          //add scale to 15
+          if (scale < 15) {
+          scale += 1;
+          offsetX =-1 * (points2[i].x * scale - canvas.width / 2)
+          offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
           } 
+          offsetX =-1 * (points2[i].x * scale - canvas.width / 2)
+          offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
+          drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+              ctx.fillStyle = "red";
+            var squareSize = 10;
+            ctx.fillRect(
+              points2[i].x - squareSize / 2,
+              points2[i].y - squareSize / 2,
+              squareSize,
+              squareSize
+            );
+}, 50);
+
+            setTimeout(() => {
+              clearInterval(renderinterval);
+            }, 1000);
+            
+          }
           //THE CLICK DOES NOT ACCOUNT FOR THE TRANSFORMED CANVAS
         }
-        });
-      }
+      });
     </script>
+    <!-- <-- import green sock -->
   </body>
 </html>
