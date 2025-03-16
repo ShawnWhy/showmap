@@ -139,6 +139,14 @@
         level4,
         level5
       ) {
+
+        //empty the points array
+       //points1 = [];
+        //points2 = [];
+        //points3 = [];
+        //points4 = [];
+        //points5 = [];
+
         //draw the circle of squares based on the data
         //draw each level of squares each with a different color of the same size and position each level in a circle
         var radius5 = Math.min(centerX, centerY) * 0.9 * scale;
@@ -285,7 +293,12 @@
           //var squareSize = 5;
 
           //ctx.fillRect(dx, dy, squareSize, squareSize);
-          points5.push({ x: dx, y: dy });
+          if(points5.length < numSquares5){
+            points5.push({ x: dx, y: dy });
+          }
+          //else{
+            //points5[i] = { x: dx, y: dy };
+          //}
         }
 
         for (var i = 0; i < numSquares4; i++) {
@@ -298,7 +311,14 @@
           //var squareSize = 5;
 
           // ctx.fillRect(dx, dy, squareSize, squareSize);
-          points4.push({ x: dx, y: dy });
+          if(points4.length < numSquares4){
+            points4.push({ x: dx, y: dy });
+          }
+          //else{
+            //points4[i].x = dx;
+            //points4[i].y = dy;
+          //}
+          //points4.push({ x: dx, y: dy });
         }
 
         for (var i = 0; i < numSquares3; i++) {
@@ -310,7 +330,13 @@
           //var squareSize = 5;
 
           //ctx.fillRect(dx, dy, squareSize, squareSize);
-          points3.push({ x: dx, y: dy });
+          if(points3.length < numSquares3){
+            points3.push({ x: dx, y: dy });
+         }
+          //else{
+          //points3[i].x = dx;
+            //points3[i].y = dy;
+          //}
         }
 
         for (var i = 0; i < numSquares2; i++) {
@@ -322,7 +348,13 @@
           // var squareSize = 5;
 
           //ctx.fillRect(dx, dy, squareSize, squareSize);
-          points2.push({ x: dx, y: dy });
+          if(points2.length < numSquares2){
+            points2.push({ x: dx, y: dy });
+          }
+          //else{
+          //points2[i].x = dx;
+          //points2[i].y = dy;
+          //}
         }
 
         for (var i = 0; i < numSquares1; i++) {
@@ -334,7 +366,13 @@
           //var squareSize = 5;
 
           //ctx.fillRect(dx, dy, squareSize, squareSize);
-          points1.push({ x: dx, y: dy });
+          if(points1.length < numSquares1){
+            points1.push({ x: dx, y: dy });
+          }
+          //else{
+            //points1[i].x = dx;
+            //points1[i].y = dy;
+          //}
         }
 
         ctx.strokeStyle = "lightgrey";
@@ -453,28 +491,6 @@
         //if the mouse position is not hovering a square, make the square 1x
         var mouseX = e.clientX;
         var mouseY = e.clientY;
-        for (var i = 0; i < numSquares1; i++) {
-          var transformedX = (mouseX - offsetX) / scale;
-          var transformedY = (mouseY - offsetY) / scale;
-          if (
-            transformedX > points1[i].x - 5 &&
-            transformedX < points1[i].x + 5 &&
-            transformedY > points1[i].y - 5 &&
-            transformedY < points1[i].y + 5
-          ) {
-            console.log("square hit");
-
-            ctx.fillStyle = "red";
-            var squareSize = 10;
-            ctx.fillRect(
-              points1[i].x - squareSize / 2,
-              points1[i].y - squareSize / 2,
-              squareSize,
-              squareSize
-            );
-          }
-        }
-
         for (let i = 0; i < numSquares2; i++) {
           var transformedX = (mouseX - offsetX) / scale;
           var transformedY = (mouseY - offsetY) / scale;
@@ -485,9 +501,31 @@
             transformedY < points2[i].y + 5
           ) {
 
+            let renderinterval2 = setInterval(() => {
+       
+             if(scale >= 15){
+              
+            //if the scale is already 15, animate to the location of the selected square
+            if(offsetX >= (-1 * (points2[i].x * scale - canvas.width / 2))){
+              offsetX -= 15;
+            }
+            else if(offsetX < (-1 * (points2[i].x * scale - canvas.width / 2))){
+              offsetX += 15;
+            }
+            if(offsetY >= (-1 * (points2[i].y * scale - canvas.height / 2))){
+              offsetY -= 15;
+            } else if(offsetY < (-1 * (points2[i].y * scale - canvas.height / 2))){
+              offsetY += 15;
+            }
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+
+
+          }
+          }, 10);
+            
+          
           let renderinterval = setInterval(() => {
-            console.log(i)
-            console.log(points2)
+
           //add scale to 15
           if (scale < 15) {
           scale += 1;
@@ -495,9 +533,11 @@
           offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
             drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
           } 
-          offsetX =-1 * (points2[i].x * scale - canvas.width / 2)
-          offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
-          drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+         
+          //offsetX =-1 * (points2[i].x * scale - canvas.width / 2)
+          //offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
+           //drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+
               ctx.fillStyle = "red";
             var squareSize = 10;
             ctx.fillRect(
@@ -506,16 +546,149 @@
               squareSize,
               squareSize
             );
-}, 50);
+}, 10);
 
             setTimeout(() => {
               clearInterval(renderinterval);
-            }, 1000);
+              clearInterval(renderinterval2);
+            }, 500);
+            
+          }
+                  
+
+          }
+        
+
+        for (let i = 0; i < numSquares1; i++) {
+          var transformedX = (mouseX - offsetX) / scale;
+          var transformedY = (mouseY - offsetY) / scale;
+          if (
+            transformedX > points1[i].x - 5 &&
+            transformedX < points1[i].x + 5 &&
+            transformedY > points1[i].y - 5 &&
+            transformedY < points1[i].y + 5
+          ) {
+          let renderinterval2 = setInterval(() => {
+       
+             if(scale >= 15){
+              
+            //if the scale is already 15, animate to the location of the selected square
+            if(offsetX >= (-1 * (points1[i].x * scale - canvas.width / 2))){
+              offsetX -= 15;
+            }
+            else if(offsetX < (-1 * (points1[i].x * scale - canvas.width / 2))){
+              offsetX += 15;
+            }
+            if(offsetY >= (-1 * (points1[i].y * scale - canvas.height / 2))){
+              offsetY -= 15;
+            } else if(offsetY < (-1 * (points1[i].y * scale - canvas.height / 2))){
+              offsetY += 15;
+            }
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+
+
+          }
+          }, 10);
+            
+          
+          let renderinterval = setInterval(() => {
+
+          //add scale to 15
+          if (scale < 15) {
+          scale += 1;
+          offsetX =-1 * (points1[i].x * scale - canvas.width / 2)
+          offsetY =-1 * (points1[i].y * scale - canvas.height / 2)
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+          } 
+         
+          //offsetX =-1 * (points2[i].x * scale - canvas.width / 2)
+          //offsetY =-1 * (points2[i].y * scale - canvas.height / 2)
+           //drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+
+              ctx.fillStyle = "red";
+            var squareSize = 10;
+            ctx.fillRect(
+              points1[i].x - squareSize / 2,
+              points1[i].y - squareSize / 2,
+              squareSize,
+              squareSize
+            );
+}, 10);
+
+            setTimeout(() => {
+              clearInterval(renderinterval);
+              clearInterval(renderinterval2);
+            }, 500);
             
           }
           //THE CLICK DOES NOT ACCOUNT FOR THE TRANSFORMED CANVAS
         }
+
+        //do the same thing for level 5
+        for (let i = 0; i < numSquares5; i++) {
+          var transformedX = (mouseX - offsetX) / scale;
+          var transformedY = (mouseY - offsetY) / scale;
+          if (
+            transformedX > points5[i].x - 5 &&
+            transformedX < points5[i].x + 5 &&
+            transformedY > points5[i].y - 5 &&
+            transformedY < points5[i].y + 5
+          ) {
+            let renderinterval2 = setInterval(() => {
+       
+             if(scale >= 15){
+              
+            //if the scale is already 15, animate to the location of the selected square
+            if(offsetX >= (-1 * (points5[i].x * scale - canvas.width / 2))){
+              offsetX -= 15;
+            }
+            else if(offsetX < (-1 * (points5[i].x * scale - canvas.width / 2))){
+              offsetX += 15;
+            }
+            if(offsetY >= (-1 * (points5[i].y * scale - canvas.height / 2))){
+              offsetY -= 15;
+            } else if(offsetY < (-1 * (points5[i].y * scale - canvas.height / 2))){
+              offsetY += 15;
+            }
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+               ctx.fillStyle = "red";
+            var squareSize = 10;
+            ctx.fillRect(
+              points5[i].x - squareSize / 2,
+              points5[i].y - squareSize / 2,
+              squareSize,
+              squareSize
+            );
+          }
+          }, 10);
+          let renderinterval = setInterval(() => {
+            if( scale < 15){
+            scale += 1;
+            offsetX =-1 * (points5[i].x * scale - canvas.width / 2)
+            offsetY =-1 * (points5[i].y * scale - canvas.height / 2)
+            drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
+            }
+            ctx.fillStyle = "red";
+            var squareSize = 10;
+            ctx.fillRect(
+              points5[i].x - squareSize / 2,
+              points5[i].y - squareSize / 2,
+              squareSize,
+              squareSize
+            );
+          }, 10);
+          setTimeout(() => {
+            clearInterval(renderinterval);
+            clearInterval(renderinterval2);
+          }, 500);
+        }
+      }
       });
+
+
+
+
+      
     </script>
     <!-- <-- import green sock -->
   </body>
