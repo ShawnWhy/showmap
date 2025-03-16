@@ -546,6 +546,9 @@
               squareSize,
               squareSize
             );
+            ctx.fillStyle = "black";
+            ctx.font = "11px Arial";
+            ctx.fillText(level2[i].name, points2[i].x, points2[i].y);
 }, 10);
 
             setTimeout(() => {
@@ -613,6 +616,9 @@
               squareSize,
               squareSize
             );
+            ctx.fillStyle = "black";
+            ctx.font = "11px Arial";
+            ctx.fillText(level1[i].name, points1[i].x, points1[i].y);
 }, 10);
 
             setTimeout(() => {
@@ -633,22 +639,27 @@
             transformedX < points5[i].x + 5 &&
             transformedY > points5[i].y - 5 &&
             transformedY < points5[i].y + 5
+          
+            
+
           ) {
+            //stop loop and execute the code below
+            
             let renderinterval2 = setInterval(() => {
        
              if(scale >= 15){
               
             //if the scale is already 15, animate to the location of the selected square
             if(offsetX >= (-1 * (points5[i].x * scale - canvas.width / 2))){
-              offsetX -= 15;
+              offsetX -= 1;
             }
             else if(offsetX < (-1 * (points5[i].x * scale - canvas.width / 2))){
-              offsetX += 15;
+              offsetX += 1;
             }
             if(offsetY >= (-1 * (points5[i].y * scale - canvas.height / 2))){
-              offsetY -= 15;
+              offsetY -= 1;
             } else if(offsetY < (-1 * (points5[i].y * scale - canvas.height / 2))){
-              offsetY += 15;
+              offsetY += 1;
             }
             drawCircleOfSquaresBasedOnData(level1, level2, level3, level4, level5);
                ctx.fillStyle = "red";
@@ -659,8 +670,13 @@
               squareSize,
               squareSize
             );
+            //display the name of the selected square
+            ctx.fillStyle = "black";
+            ctx.font = "11px Arial";
+            ctx.fillText(level5[i].name, points5[i].x, points5[i].y);
+
           }
-          }, 10);
+          }, 5);
           let renderinterval = setInterval(() => {
             if( scale < 15){
             scale += 1;
@@ -681,7 +697,10 @@
             clearInterval(renderinterval);
             clearInterval(renderinterval2);
           }, 500);
+          return;
         }
+        
+        
       }
       });
 
